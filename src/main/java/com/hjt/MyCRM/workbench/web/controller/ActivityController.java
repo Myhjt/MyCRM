@@ -8,21 +8,19 @@ import com.hjt.MyCRM.utils.DateTimeUtil;
 import com.hjt.MyCRM.utils.PrintJson;
 import com.hjt.MyCRM.utils.ServiceFactory;
 import com.hjt.MyCRM.utils.UUIDUtil;
+import com.hjt.MyCRM.vo.PaginationVo;
 import com.hjt.MyCRM.workbench.domain.Activity;
 import com.hjt.MyCRM.workbench.service.ActivityService;
 import com.hjt.MyCRM.workbench.service.impl.ActivityServiceImpl;
-import com.mysql.cj.util.TimeUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Provider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 /*
@@ -38,9 +36,36 @@ public class ActivityController extends HttpServlet {
         else if("/workbench/activity/save.do".equals(path)){
             saveActivity(request,response);
         }
+        else if("/workbench/activity/pageList.do".equals(path)){
+            pageList(request,response);
+        }
         else if("/workbench/activity/xxx.do".equals(path)){
 
         }
+    }
+
+    //分页查询
+    private void pageList(HttpServletRequest request, HttpServletResponse response) {
+        String pageNoStr = request.getParameter("pageNo");
+        String pageSizeStr = request.getParameter("pageSize");
+        String name = request.getParameter("name");
+        String owner = request.getParameter("owner");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        int pageNo = Integer.valueOf(pageNoStr);
+        int pageSize = Integer.valueOf(pageSizeStr);
+        int pageStart = (pageNo-1)*pageSize;
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("pageStart",pageStart);
+        map.put("pageSize",pageSize);
+        map.put("name",name);
+        map.put("owner",owner);
+        map.put("startDate",startDate);
+        map.put("endDate",endDate);
+
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        PaginationVo<Activity> pageList = activityService.getPaginationVo(map);
+        PrintJson.printJsonObj(response,pageList);
     }
 
     //添加活动

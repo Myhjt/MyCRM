@@ -18,6 +18,46 @@
 
 	<script type="text/javascript">
 
+		/*
+		* 对于关系型数据库，做前端分页需要的参数就是pageNo，pageSize
+		* 有哪些情况需要调用pageList方法：
+		* 	1)刚进入到液面时
+		* 	2）数据添加、修改、删除时
+		* 	3）点击分页按钮时
+		* 	4）点击查询按钮时
+		* */
+		function pageList(pageNo, pageSize){
+			$.ajax({
+				url:"workbench/activity/pageList.do",
+				type:"get",
+				data:{
+					pageNo:pageNo,pageSize:pageSize,name:$("#search-name").val().trim(),owner:$("#search-owner").val().trim(),
+					startDate:$("#search-startDate").val().trim(),endDate:$("#search-endDate").val().trim()
+				},
+				dataType: "json",
+				success:function(data){
+					/*
+					* data:{"total":"xxx","dataList":[{'name':"","owner":"","startDate":"","endDate":""},{}]}
+					* */
+					$("#activity-list").empty()//清空列表
+					let html =""
+					$.each(data.dataList,function(index,value){
+						html += "<tr class='active'> " +
+								"<td><input type='checkbox'/></td> " +
+								"<td>" +
+								"<a style='text-decoration: none; cursor: pointer;' onclick='window.location.href='detail.html';'>"+
+								value.name +
+								"</a>" +
+								"</td> " +
+								"<td>"+value.owner+"</td> <td>"+value.startDate+"</td> <td>"+value.endDate+"</td> " +
+								"</tr>"
+						console.log(html)
+					})
+					$("#activity-list").html(html);
+
+				}
+			})
+		}
 		$(function(){
 
 			//创建按钮，打开创建模态窗口
@@ -85,6 +125,11 @@
 					})
 				}
 
+			})
+
+			//查询按钮
+			$("#search-button").click(function(){
+				pageList(1,2);
 			})
 		});
 
@@ -232,21 +277,20 @@
 	</div>
 	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
 		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
-		
 			<div class="btn-toolbar" role="toolbar" style="height: 80px;">
 				<form class="form-inline" role="form" style="position: relative;top: 8%; left: 5px;">
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-owner">
 				    </div>
 				  </div>
 
@@ -254,17 +298,17 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">开始日期</div>
-					  <input class="form-control" type="text" id="startTime" />
+					  <input class="form-control" type="text" id="search-startDate" />
 				    </div>
 				  </div>
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">结束日期</div>
-					  <input class="form-control" type="text" id="endTime">
+					  <input class="form-control" type="text" id="search-endDate">
 				    </div>
 				  </div>
-				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" class="btn btn-default" id="search-button">查询</button>
 				  
 				</form>
 			</div>
@@ -308,7 +352,7 @@
 							<td>结束日期</td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="activity-list">
 						<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
