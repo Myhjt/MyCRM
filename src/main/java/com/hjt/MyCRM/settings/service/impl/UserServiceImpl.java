@@ -6,8 +6,10 @@ import com.hjt.MyCRM.settings.domain.User;
 import com.hjt.MyCRM.settings.service.UserService;
 import com.hjt.MyCRM.utils.DateTimeUtil;
 import com.hjt.MyCRM.utils.SqlSessionUtil;
+import com.hjt.MyCRM.workbench.domain.Activity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserServiceImpl implements UserService {
@@ -37,5 +39,10 @@ public class UserServiceImpl implements UserService {
             throw new LoginException("账号已锁定，请联系管理员");
         }
         return user;
+    }
+
+    @Override
+    public List<User> getUserList() {
+        return userDao.getUserList();
     }
 }

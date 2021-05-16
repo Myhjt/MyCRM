@@ -7,4 +7,8 @@
     <select id="login" resultType="com.hjt.MyCRM.settings.domain.User">
         select * from tbl_user where loginAct=#{loginAct} and loginPwd=#{loginPwd}
     </select>
+
+    <select id="getUserList"  resultType="com.hjt.MyCRM.settings.domain.User">
+        select * from tbl_user;
+    </select>
 </mapper>

@@ -6,6 +6,17 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <!--
+        add/create：跳转到添加页，
+        save:执行添加操作
+        edit:跳转到修改页，或者打开修改操作的模态窗口
+        update:执行修改操作
+        get:执行查询操作
+        特殊操作
+    -->
+
+
     <!--字符编码过滤器-->
     <filter>
         <filter-name>EncodingFilter</filter-name>
@@ -26,12 +37,23 @@
         <url-pattern>*.jsp</url-pattern>
     </filter-mapping>
     <servlet>
-        <servlet-name>userController</servlet-name>
+        <servlet-name>UserController</servlet-name>
         <servlet-class>com.hjt.MyCRM.settings.web.controller.UserController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>userController</servlet-name>
+        <servlet-name>UserController</servlet-name>
         <url-pattern>/settings/user/save.do</url-pattern>
         <url-pattern>/settings/user/login.do</url-pattern>
+    </servlet-mapping>
+
+    <!--市场活动-->
+    <servlet>
+        <servlet-name>ActivityController</servlet-name>
+        <servlet-class>com.hjt.MyCRM.workbench.web.controller.ActivityController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ActivityController</servlet-name>
+        <url-pattern>/workbench/activity/save.do</url-pattern>
+        <url-pattern>/workbench/activity/getUserList.do</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -18,8 +18,29 @@
 
 		$(function(){
 
+			//创建按钮，打开创建模态窗口
+			$("#addBtn").click(function (){
+				/*
+				 *	打开需要打开的模态窗口jquery对象，调用modal，为方法传参数，
+				 * 				show：打开模态窗口，hide：关闭模态窗口
+				 *
+				 */
+				$.ajax({
+					url:"workbench/activity/getUserList.do",
+					dataType:"json",
+					type:"get",
+					success:function (data){
+						$.each(data,function(index,value){
+							let obj = "<option value="+value.id+">"+value.name+"</option>"
+							$("#create-marketActivityOwner").append(obj);
+						})
+					},
+					error:function(){
 
-
+					}
+				})
+				$("#createActivityModal").modal("show");
+			})
 		});
 
 	</script>
@@ -44,9 +65,6 @@
 							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
 								</select>
 							</div>
                             <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -205,9 +223,30 @@
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+
+					<%--
+						点击创建按钮，观察data-toggle 和data-target 属性值
+						data-toggle:
+							表示点击按钮，触发一个模态窗口
+						data-target:
+							打开的模态窗口对象，这里通过id查找
+
+						这里通过属性和属性值的方式来打开模态窗口
+						但是这样有问题：
+							在点击创建按钮的时候，需要触发其他功能的时候
+
+						所以以后打开模态窗口时，不要写死在元素当中
+					--%>
+				  <button type="button" class="btn btn-primary" id="addBtn">
+					  <span class="glyphicon glyphicon-plus"></span> 创建
+				  </button>
+
+				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal">
+					  <span class="glyphicon glyphicon-pencil"></span> 修改
+				  </button>
+
+				  <button type="button" class="btn btn-danger">
+					  <span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 			</div>
