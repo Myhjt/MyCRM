@@ -27,5 +27,6 @@
         <package name="com.hjt.MyCRM.settings.dao"/>
         <package name="com.hjt.MyCRM.workbench.dao"/>
     </mappers>
+
 </configuration>
 

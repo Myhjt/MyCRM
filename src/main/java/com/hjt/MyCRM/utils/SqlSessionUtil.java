@@ -22,8 +22,7 @@ public class SqlSessionUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		factory =
-		 new SqlSessionFactoryBuilder().build(inputStream);
+		factory = new SqlSessionFactoryBuilder().build(inputStream);
 		
 	}
 	private static ThreadLocal<SqlSession> t = new ThreadLocal<SqlSession>();
@@ -40,7 +39,6 @@ public class SqlSessionUtil {
 		if(session!=null){
 			session.close();
 			t.remove();
-			System.out.println("connection close");
 		}
 	}
 	

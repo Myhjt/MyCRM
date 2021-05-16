@@ -6,4 +6,9 @@
     <select id="get" resultType="com.hjt.MyCRM.workbench.domain.Activity">
         select * from tbl_activity
     </select>
+
+    <insert id="save" >
+        insert into tbl_activity(id,owner,name,startDate,endDate,cost,description,createTime,createBy)
+        values(#{id},#{owner},#{name},#{startDate},#{endDate},#{cost},#{description},#{createTime},#{createBy})
+    </insert>
 </mapper>

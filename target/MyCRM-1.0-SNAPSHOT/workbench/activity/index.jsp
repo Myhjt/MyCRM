@@ -11,7 +11,9 @@
 
 	<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 	<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+	<%--时间拾取插件--%>
 	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+	<%--本地化语言包--%>
 	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 	<script type="text/javascript">
@@ -34,12 +36,55 @@
 							let obj = "<option value="+value.id+">"+value.name+"</option>"
 							$("#create-marketActivityOwner").append(obj);
 						})
+						$("#create-marketActivityOwner").val("${user.id}")
 					},
 					error:function(){
 
 					}
 				})
 				$("#createActivityModal").modal("show");
+				//时间拾取器
+				$(".time").datetimepicker({
+					minView:"month",
+					language:"zh-CN",
+					format:"yyyy-mm-dd",
+					autoclose:true,
+					todayBtn:true,
+					pickerPosition:"bottom-left"
+				})
+			})
+
+			//保存按钮
+			$("#saveBtn").click(function (){
+				//判段市场信息是否合法
+				if(false){
+
+				}
+				else{
+					//合法发送请求
+					$.ajax({
+						url:"workbench/activity/save.do",
+						type:"post",
+						data:$("#saveActivityForm").serialize(),
+						success:function (data){
+							//添加成功
+							if(data.code===0){
+								//刷新市场活动列表
+								//关闭添加操作的模态窗口
+								$("#createActivityModal").modal("hide");
+								//重置表单
+								$("#saveActivityForm")[0].reset();
+							}
+							else{
+								alert("添加失败");
+							}
+						},
+						error:function(){
+
+						}
+					})
+				}
+
 			})
 		});
 
@@ -58,42 +103,41 @@
 					<h4 class="modal-title" id="myModalLabel1">创建市场活动</h4>
 				</div>
 				<div class="modal-body">
-				
-					<form class="form-horizontal" role="form">
-					
+
+					<form id="saveActivityForm" class="form-horizontal" role="form">
 						<div class="form-group">
 							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-marketActivityOwner">
+								<%--所属用户--%>
+								<select class="form-control" name="owner" id="create-marketActivityOwner">
 								</select>
 							</div>
                             <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="create-marketActivityName">
+                                <input type="text" name="name" class="form-control" id="create-marketActivityName">
                             </div>
 						</div>
 						
 						<div class="form-group">
 							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startTime">
+								<input type="text" name="startDate" class="form-control time" id="create-startTime" readonly>
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endTime">
+								<input type="text" name="endDate" class="form-control time" id="create-endTime" readonly>
 							</div>
 						</div>
                         <div class="form-group">
-
                             <label for="create-cost" class="col-sm-2 control-label">成本</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="create-cost">
+                                <input type="text" name="cost" class="form-control" id="create-cost">
                             </div>
                         </div>
 						<div class="form-group">
 							<label for="create-describe" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" name="description" id="create-describe"></textarea>
 							</div>
 						</div>
 						
@@ -101,8 +145,11 @@
 					
 				</div>
 				<div class="modal-footer">
+					<%--
+						data-dismiss="modal" 表示关闭模态窗口
+					--%>
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveBtn">保存</button>
 				</div>
 			</div>
 		</div>

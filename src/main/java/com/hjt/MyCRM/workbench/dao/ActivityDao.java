@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ActivityDao {
     List<Activity> get();
+
+    int save(Activity activity);
 }
