@@ -1,5 +1,7 @@
 package com.hjt.MyCRM.workbench.web.controller;
 
+import com.hjt.MyCRM.exception.ActivityDeleteException;
+import com.hjt.MyCRM.exception.ActivityRemarkDeleteException;
 import com.hjt.MyCRM.exception.ActivitySaveException;
 import com.hjt.MyCRM.settings.domain.User;
 import com.hjt.MyCRM.settings.service.UserService;
@@ -39,8 +41,23 @@ public class ActivityController extends HttpServlet {
         else if("/workbench/activity/pageList.do".equals(path)){
             pageList(request,response);
         }
-        else if("/workbench/activity/xxx.do".equals(path)){
+        else if("/workbench/activity/delete.do".equals(path)){
+            delete(request,response);
+        }
+    }
 
+    private void delete(HttpServletRequest request, HttpServletResponse response) {
+        String[] ids = request.getParameterValues("ids");
+        System.out.println(ids);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        try {
+            boolean flag = activityService.delete(ids);
+            PrintJson.printJsonFlag(response,flag);
+        } catch (ActivityDeleteException | ActivityRemarkDeleteException e) {
+            Map<String,Object> map = new HashMap<>();
+            map.put("code",-1);
+            map.put("msg",e.getMessage());
+            PrintJson.printJsonObj(response,map);
         }
     }
 
