@@ -1,6 +1,7 @@
 package com.hjt.MyCRM.workbench.web.controller;
 
 import com.hjt.MyCRM.exception.ActivityRemarkDeleteException;
+import com.hjt.MyCRM.exception.ActivityRemarkModifyException;
 import com.hjt.MyCRM.exception.ActivityRemarkSaveException;
 import com.hjt.MyCRM.settings.domain.User;
 import com.hjt.MyCRM.utils.DateTimeUtil;
@@ -34,6 +35,36 @@ public class ActivityRemarkController extends HttpServlet {
         }
         else if("/workbench/activityRemark/delete.do".equals(path)){
             delete(request,response);
+        }
+        else if("/workbench/activityRemark/modify.do".equals(path)){
+            modify(request,response);
+        }
+    }
+
+    private void modify(HttpServletRequest request, HttpServletResponse response) {
+        /*前端传入参数
+        * id:"",noteContent
+        * */
+        String id = request.getParameter("id");
+        String noteContent = request.getParameter("noteContent");
+        String editBy = ((User)request.getSession().getAttribute("user")).getId();
+        String editTime = DateTimeUtil.getSysTime();
+        ActivityRemark remark = new ActivityRemark();
+        remark.setId(id);
+        remark.setNoteContent(noteContent);
+        remark.setEditFlag("1");
+        remark.setEditBy(editBy);
+        remark.setEditTime(editTime);
+        ActivityRemarkService remarkService = (ActivityRemarkService)ServiceFactory.getService(new ActivityRemarkServiceImpl());
+        try {
+            boolean flag = remarkService.modify(remark);
+            PrintJson.printJsonFlag(response,flag);
+        } catch (ActivityRemarkModifyException e) {
+            String msg = e.getMessage();
+            Map<String,Object> map = new HashMap<>();
+            map.put("msg",msg);
+            map.put("code",-1);
+            PrintJson.printJsonObj(response,map);
         }
     }
 

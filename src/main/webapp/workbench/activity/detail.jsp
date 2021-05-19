@@ -36,15 +36,15 @@
 					})
 					let html = ''
 					$.each(data,function(index,value){
-						let createBy = value.editBy ==null?value.createBy:value.editBy;
-						let createTime = value.editTime==null?value.createTime:value.editTime;
-						html +='<div class="remarkDiv" id='+value.id+'style="height: 60px;">'+
+						let createBy = value.editFlag==="0"?value.createBy:value.editBy
+						let createTime = value.editFlag==="0"?value.createTime:value.editTime
+						html +='<div class="remarkDiv" id="'+value.id+'"style="height: 60px;">'+
 								'<img title='+value.createBy+' src="image/user-thumbnail.png" style="width: 30px; height:30px;">'+
 								'<div style="position: relative; top: -40px; left: 40px;" >'+
 								'<h5>'+value.noteContent+'</h5>'+
 								'<font color="gray">市场活动</font> <font color="gray">-</font> <b>${activity.name}</b> <small style="color: gray;"> '+createTime+' 由'+createBy+'</small>'+
 								'<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">'+
-								'<a class="myHref" href="javascript:void(0);""><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>'+
+								'<a class="myHref" href="javascript:void(0);" onclick=editRemark(\''+value.id+'\')><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>'+
 								'&nbsp;&nbsp;&nbsp;&nbsp;'+
 								'<a class="myHref" href="javascript:void(0);" onclick=removeRemark(\''+value.id+'\')><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>'+
 								'</div>'+
@@ -58,7 +58,6 @@
 
 		//删除备注
 		function removeRemark(remarkId){
-			alert(remarkId)
 			$.ajax({
 				url:"workbench/activityRemark/delete.do",
 				data:{"remarkId":remarkId},
@@ -74,6 +73,14 @@
 					}
 				}
 			})
+		}
+
+		//修改备注按钮，显示模态窗口
+		function editRemark(remarkId){
+			$("#editRemarkModal").modal("show");
+			$("#remarkId").val(remarkId)
+			console.log($("#"+remarkId+" h5").text())
+			$("#noteContent").val($("#"+remarkId+" h5").text())  //设置模态窗口内的备注内容
 		}
 		$(function(){
 			$("#remark").focus(function(){
@@ -136,6 +143,31 @@
 				}
 			})
 
+			//更新备注按钮
+			$("#updateRemarkBtn").click(function(){
+				let noteContent = $.trim($("#noteContent").val())
+				if(noteContent===""){
+					alert("备注内容不能为空");
+				}
+				else{
+					$.ajax({
+						url:"workbench/activityRemark/modify.do",
+						data:{"id":$("#remarkId").val(),"noteContent":noteContent},
+						dataType:"json",
+						type:"post",
+						success:function(data){
+							if(data.code==0){
+								loadRemark();
+								$("#editRemarkModal").modal("hide")
+							}
+							else{
+								alert(data.msg);
+							}
+						}
+					})
+				}
+			})
+
 			//加载备注
 			loadRemark()
 			$("#remarkBody").on("mouseover",".remarkDiv",function(){
@@ -160,7 +192,7 @@
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel"><修改备></修改备>注</h4>
+                    <h4 class="modal-title" id="myModalLabel">修改备注</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">

@@ -17,23 +17,22 @@
         </foreach>
     </delete>
 
-    <!--根据id获取remark-->
+    <!--根据activityId获取remark-->
     <select id="getById" resultType="ActivityRemark">
         select
             r.id,
             r.noteContent,
-            r.createTime ,
+            r.createTime    ,
             u.name as createBy,
             r.editTime   ,
-            r.editBy     ,
+            u.name as editBy     ,
             r.editFlag   ,
             r.activityId
         from tbl_activity_remark  as r
         join tbl_user as u
-        on r.createBy = u.id
+        on r.createBy = u.id or r.editBy = u.id
         where activityId = #{activityId}
-        order by
-        editTime,createTime desc
+        order by r.createTime desc
 
     </select>
 
@@ -42,10 +41,18 @@
         insert into tbl_activity_remark(
             id,noteContent,createTime ,createBy,editTime,editBy,editFlag,activityId
         )
-        values(#{id},#{noteContent},#{createTime},#{createBy},#{editTime},#{editBy},#{editBy},#{activityId})
+        values(#{id},#{noteContent},#{createTime},#{createBy},#{editTime},#{editBy},#{editFlag},#{activityId})
     </insert>
 
+    <!--根据id删除-->
     <delete id="delete" >
         delete from tbl_activity_remark where id=#{id}
     </delete>
+
+    <!--根据id修改-->
+    <update id="modify">
+        update tbl_activity_remark
+        set noteContent=#{noteContent},editTime=#{editTime},editBy=#{editBy},editFlag=#{editFlag}
+        where id=#{id}
+    </update>
 </mapper>

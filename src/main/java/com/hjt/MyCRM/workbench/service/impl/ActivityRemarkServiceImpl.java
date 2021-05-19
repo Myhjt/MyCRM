@@ -1,6 +1,7 @@
 package com.hjt.MyCRM.workbench.service.impl;
 
 import com.hjt.MyCRM.exception.ActivityRemarkDeleteException;
+import com.hjt.MyCRM.exception.ActivityRemarkModifyException;
 import com.hjt.MyCRM.exception.ActivityRemarkSaveException;
 import com.hjt.MyCRM.utils.SqlSessionUtil;
 import com.hjt.MyCRM.workbench.dao.ActivityDao;
@@ -21,6 +22,7 @@ public class ActivityRemarkServiceImpl implements ActivityRemarkService {
 
     @Override
     public boolean save(ActivityRemark remark) throws ActivityRemarkSaveException {
+        System.out.println(remark.getEditFlag());
         int result = remarkDao.save(remark);
         if(result!=1){
             throw new ActivityRemarkSaveException("备注保存失败");
@@ -37,5 +39,14 @@ public class ActivityRemarkServiceImpl implements ActivityRemarkService {
             throw new ActivityRemarkDeleteException("活动备注删除失败");
         }
         return true;
+    }
+
+    @Override
+    public boolean modify(ActivityRemark remark) throws ActivityRemarkModifyException {
+       int result = remarkDao.modify(remark);
+       if(result!=1){
+           throw new ActivityRemarkModifyException("备注修改失败");
+       }
+       return true;
     }
 }
