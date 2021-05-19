@@ -57,6 +57,20 @@
         <url-pattern>/workbench/activity/getUserList.do</url-pattern>
         <url-pattern>/workbench/activity/pageList.do</url-pattern>
         <url-pattern>/workbench/activity/delete.do</url-pattern>
+        <url-pattern>/workbench/activity/getUserListAndActivity.do</url-pattern>
+        <url-pattern>/workbench/activity/modify.do</url-pattern>
+        <url-pattern>/workbench/activity/detail.do</url-pattern>
     </servlet-mapping>
 
+    <!--市场活动备注-->
+    <servlet>
+        <servlet-name>ActivityRemarkController</servlet-name>
+        <servlet-class>com.hjt.MyCRM.workbench.web.controller.ActivityRemarkController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ActivityRemarkController</servlet-name>
+        <url-pattern>/workbench/activityRemark/getRemarkList.do</url-pattern>
+        <url-pattern>/workbench/activityRemark/save.do</url-pattern>
+        <url-pattern>/workbench/activityRemark/delete.do</url-pattern>
+    </servlet-mapping>
 </web-app>

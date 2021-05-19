@@ -1,6 +1,7 @@
 package com.hjt.MyCRM.workbench.web.controller;
 
 import com.hjt.MyCRM.exception.ActivityDeleteException;
+import com.hjt.MyCRM.exception.ActivityModifyException;
 import com.hjt.MyCRM.exception.ActivityRemarkDeleteException;
 import com.hjt.MyCRM.exception.ActivitySaveException;
 import com.hjt.MyCRM.settings.domain.User;
@@ -12,9 +13,11 @@ import com.hjt.MyCRM.utils.ServiceFactory;
 import com.hjt.MyCRM.utils.UUIDUtil;
 import com.hjt.MyCRM.vo.PaginationVo;
 import com.hjt.MyCRM.workbench.domain.Activity;
+import com.hjt.MyCRM.workbench.domain.ActivityRemark;
 import com.hjt.MyCRM.workbench.service.ActivityService;
 import com.hjt.MyCRM.workbench.service.impl.ActivityServiceImpl;
 
+import javax.print.attribute.HashPrintJobAttributeSet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +47,75 @@ public class ActivityController extends HttpServlet {
         else if("/workbench/activity/delete.do".equals(path)){
             delete(request,response);
         }
+        else if("/workbench/activity/getUserListAndActivity.do".equals(path)){
+            getUserListAndActivity(request,response);
+        }
+        else if("/workbench/activity/modify.do".equals(path)){
+            modify(request,response);
+        }
+        else if("/workbench/activity/detail.do".equals(path)){
+            detail(request,response);
+        }
+
     }
 
+
+
+    //获取详细信息
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id = request.getParameter("id");
+        ActivityService  activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        Activity activity = activityService.detail(id);
+        request.setAttribute("activity",activity);
+        request.getRequestDispatcher("/workbench/activity/detail.jsp").forward(request,response);
+    }
+
+    //修改
+    private void modify(HttpServletRequest request, HttpServletResponse response) {
+        String id = request.getParameter("id");
+        String name = request.getParameter("name");
+        String owner = request.getParameter("owner");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String description = request.getParameter("description");
+        String cost = request.getParameter("cost");
+        String editTime = DateTimeUtil.getSysTime();
+        String editBy = ((User)request.getSession().getAttribute("user")).getName();
+        Activity activity = new Activity();
+        activity.setId(id);
+        activity.setName(name);
+        activity.setOwner(owner);
+        activity.setStartDate(startDate);
+        activity.setEndDate(endDate);
+        activity.setCost(cost);
+        activity.setDescription(description);
+        //修改人
+        activity.setEditBy(editBy);
+        //修改时间
+        activity.setEditTime(editTime);
+
+        ActivityService  activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        try {
+            boolean flag = activityService.modify(activity);
+            PrintJson.printJsonFlag(response,flag);
+        } catch (ActivityModifyException e) {
+            Map<String,Object> map = new HashMap<>();
+            map.put("code",-1);
+            map.put("msg",e.getMessage());
+            PrintJson.printJsonObj(response,map);
+        }
+    }
+
+    //获取用户列表及活动
+    private void getUserListAndActivity(HttpServletRequest request, HttpServletResponse response) {
+        String activityId = request.getParameter("id");
+        ActivityService activityService = (ActivityService)ServiceFactory.getService(new ActivityServiceImpl());
+        Map<String,Object> map = activityService.getUserListAndActivity(activityId);
+        PrintJson.printJsonObj(response,map);
+    }
+
+    //删除
     private void delete(HttpServletRequest request, HttpServletResponse response) {
         String[] ids = request.getParameterValues("ids");
         System.out.println(ids);
@@ -140,4 +210,6 @@ public class ActivityController extends HttpServlet {
         List<User> users= service.getUserList();
         PrintJson.printJsonObj(response,users);
     }
+
+
 }

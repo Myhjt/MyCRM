@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hjt.MyCRM.workbench.dao.ActivityDao">
 
+    <!--获取所有-->
     <select id="get" resultType="com.hjt.MyCRM.workbench.domain.Activity">
         select * from tbl_activity
     </select>
@@ -28,7 +29,28 @@
                 and endDate <![CDATA[<=]]> #{endDate}
             </if>
         </where>
+        order by a.createTime  desc
         limit #{pageStart},#{pageSize}
+    </select>
+
+    <!--获取detail-->
+    <select id="detail" resultType="com.hjt.MyCRM.workbench.domain.Activity">
+        select
+            a.id,
+            u.name as owner,
+            a.name,
+            a.startDate,
+            a.endDate,
+            a.cost,
+            a.description,
+            a.createTime,
+            a.createBy,
+            a.editTime,
+            a.editBy
+        from tbl_activity as a
+        join tbl_user as u
+        on a.owner = u.id
+        where a.id=#{id}
     </select>
 
     <!--getTotalByCondition-->
@@ -49,15 +71,21 @@
                 and endDate <![CDATA[<=]]> #{endtDate}
             </if>
         </where>
-        order by a.createTime  desc
+
     </select>
 
+    <!--根据id获取数据-->
+    <select id="getById" resultType="com.hjt.MyCRM.workbench.domain.Activity">
+        select * from tbl_activity where id = #{id}
+    </select>
 
+    <!--添加数据-->
     <insert id="save" >
         insert into tbl_activity(id,owner,name,startDate,endDate,cost,description,createTime,createBy)
         values(#{id},#{owner},#{name},#{startDate},#{endDate},#{cost},#{description},#{createTime},#{createBy})
     </insert>
 
+    <!--根据id数组删除-->
     <delete id="deleteByIds">
         delete from tbl_activity where id in
         <foreach collection="array" open="(" separator="," close=")" item="id">
@@ -65,4 +93,11 @@
         </foreach>
     </delete>
 
+    <!--更新-->
+    <update id="modify">
+        update tbl_activity
+        set name=#{name},owner=#{owner},cost=#{cost},startDate=#{startDate},endDate=#{endDate},description=#{description},
+            editBy=#{editBy},editTime=#{editTime}
+        where id = #{id}
+    </update>
 </mapper>

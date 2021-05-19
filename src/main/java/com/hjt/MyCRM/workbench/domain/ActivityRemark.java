@@ -1,6 +1,6 @@
 package com.hjt.MyCRM.workbench.domain;
 
-public class ActivityMark {
+public class ActivityRemark {
     private String id;             //
     private String noteContent;    //备注信息
     private String createTime;     //
