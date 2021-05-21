@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html;charset=utf-8" %>
 <%
 	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
@@ -50,6 +51,22 @@
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
+
+		//编辑按钮
+		$("#editBtn").click(function(){
+			$("#editClueModal").modal("show");
+			$.ajax({
+				url:"workbench/clue/getUserList.do",
+				dataType:"json",
+				type:"get",
+				success:function(data){
+					$.each(data,function(index,value){
+						console.log("<option value='"+value.id+"'>"+value.name+"</option>")
+						$("#edit-clueOwner").append("<option value='"+value.id+"'>"+value.name+"</option>")
+					})
+				}
+			})
+		})
 	});
 
 </script>
@@ -127,9 +144,9 @@
                             <label for="edit-clueOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
                                 <select class="form-control" id="edit-clueOwner">
-                                    <option>zhangsan</option>
-                                    <option>lisi</option>
-                                    <option>wangwu</option>
+                                    <%--<option>zhangsan</option>--%>
+                                    <%--<option>lisi</option>--%>
+                                    <%--<option>wangwu</option>--%>
                                 </select>
                             </div>
                             <label for="edit-company" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
@@ -142,12 +159,9 @@
                             <label for="edit-call" class="col-sm-2 control-label">称呼</label>
                             <div class="col-sm-10" style="width: 300px;">
                                 <select class="form-control" id="edit-call">
-                                    <option></option>
-                                    <option selected>先生</option>
-                                    <option>夫人</option>
-                                    <option>女士</option>
-                                    <option>博士</option>
-                                    <option>教授</option>
+									<c:forEach items="${appellationList}" var="appellation">
+										<option value="${appellation.value}">${appellation.text}</option>
+									</c:forEach>
                                 </select>
                             </div>
                             <label for="edit-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
@@ -177,7 +191,6 @@
                                 <input type="text" class="form-control" id="edit-website" value="http://www.bjpowernode.com">
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="edit-mphone" class="col-sm-2 control-label">手机</label>
                             <div class="col-sm-10" style="width: 300px;">
@@ -186,14 +199,9 @@
                             <label for="edit-status" class="col-sm-2 control-label">线索状态</label>
                             <div class="col-sm-10" style="width: 300px;">
                                 <select class="form-control" id="edit-status">
-                                    <option></option>
-                                    <option>试图联系</option>
-                                    <option>将来联系</option>
-                                    <option selected>已联系</option>
-                                    <option>虚假线索</option>
-                                    <option>丢失线索</option>
-                                    <option>未联系</option>
-                                    <option>需要条件</option>
+									<c:forEach items="${clueStateList}" var="clueState">
+										<option value="${clueState.value}">${clueState.text}</option>
+									</c:forEach>
                                 </select>
                             </div>
                         </div>
@@ -202,21 +210,9 @@
                             <label for="edit-source" class="col-sm-2 control-label">线索来源</label>
                             <div class="col-sm-10" style="width: 300px;">
                                 <select class="form-control" id="edit-source">
-                                    <option></option>
-                                    <option selected>广告</option>
-                                    <option>推销电话</option>
-                                    <option>员工介绍</option>
-                                    <option>外部介绍</option>
-                                    <option>在线商场</option>
-                                    <option>合作伙伴</option>
-                                    <option>公开媒介</option>
-                                    <option>销售邮件</option>
-                                    <option>合作伙伴研讨会</option>
-                                    <option>内部研讨会</option>
-                                    <option>交易会</option>
-                                    <option>web下载</option>
-                                    <option>web调研</option>
-                                    <option>聊天</option>
+									<c:forEach items="${sourceList}" var="source">
+										<option value="${source.value}">${source.text}</option>
+									</c:forEach>
                                 </select>
                             </div>
                         </div>
@@ -278,7 +274,7 @@
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
 			<button type="button" class="btn btn-default" onclick="window.location.href='workbench/clue/convert.jsp';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
-			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
+			<button type="button" class="btn btn-default" id="editBtn"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
 			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>
 	</div>

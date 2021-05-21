@@ -16,7 +16,9 @@
         特殊操作
     -->
 
-
+    <listener>
+        <listener-class>com.hjt.MyCRM.web.listener.SysInitListener</listener-class>
+    </listener>
     <!--字符编码过滤器-->
     <filter>
         <filter-name>EncodingFilter</filter-name>
@@ -73,5 +75,15 @@
         <url-pattern>/workbench/activityRemark/save.do</url-pattern>
         <url-pattern>/workbench/activityRemark/delete.do</url-pattern>
         <url-pattern>/workbench/activityRemark/modify.do</url-pattern>
+    </servlet-mapping>
+
+    <!--线索-->
+    <servlet>
+        <servlet-name>ClueController</servlet-name>
+        <servlet-class>com.hjt.MyCRM.workbench.web.controller.ClueController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ClueController</servlet-name>
+        <url-pattern>/workbench/clue/getUserList.do</url-pattern>
     </servlet-mapping>
 </web-app>

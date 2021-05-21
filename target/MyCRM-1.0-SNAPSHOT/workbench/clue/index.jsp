@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html;charset=utf-8" %>
 <%
 	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
@@ -18,11 +19,75 @@
 <script type="text/javascript">
 
 	$(function(){
+		//添加按钮点击，弹出模态对话框
+		$("#createBtn").click(function(){
+			$("#createClueModal").modal("show");
+			$.ajax({
+				url:"workbench/clue/getUserList.do",
+				dataType:"json",
+				type:"get",
+				success:function(data){
+					$.each(data,function(index,value){
+						$("#create-clueOwner").append("<option value='"+value.id+"'>"+value.name+"</option>")
+					})
+					$("#create-clueOwner").val('${user.id}')
+				}
+			})
+
+		})
 
 
+		//保存按钮，提交数据
+		$("#saveBtn").click(function(){
+			let owner = $("#create-clueOwner").val();//线索所有者id
+			let company = $.trim($("#create-company").val());//线索的公司
+			let fullname = $.trim($("#create-surname").val());//线索的姓名
+			if(owner===""){
+				alert("所有者不能为空")
+			}
+			else if(company===""){
+				alert("公司不能为空")
+			}
+			else if(fullname===""){
+				alert("姓名不能为空")
+			}
+			else{
+				let appellation=$.trim($("#create-call").val())
+				let job=$.trim($("#create-job").val())
+				let email=$.trim($("#create-email").val())
+				let phone=$.trim($("#create-phone").val())
+				let website=$.trim($("#create-website").val())
+				let mphone=$.trim($("#create-mphone").val())
+				let state=$.trim($("#create-state").val())
+				let source=$.trim($("#create-source").val())
+				let createBy='${user.id}' //由谁创建的记录
+				let description=$.trim($("#create-describe").val())
+				let contactSummary=$.trim($("#create-contactSummary").val())
+				let nextContactTime=$.trim($("#create-nextContactTime").val())
+				let address=$.trim($("#create-address").val())
 
+				//发送请求
+				$.ajax({
+					url:"",
+					data:{appellation:appellation, owner:owner, company:company, job:job, email:email,
+						phone:phone, website:website, mphone:mphone, state:state, source:source, address:address,
+						description:description, contactSummary:contactSummary, nextContactTime:nextContactTime,
+						createBy:createBy
+					},
+					dataType:"json",
+					type:"post",
+					success:function(data){
+						if(data.code!=0){
+							alert(data.msg)
+						}
+						else{
+							$("#createClueModal").modal("hide");
+						}
+					}
+				})
+			}
+		})
 	});
-
 </script>
 <body>
 
@@ -43,9 +108,7 @@
 							<label for="create-clueOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-clueOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+
 								</select>
 							</div>
 							<label for="create-company" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
@@ -58,12 +121,9 @@
 							<label for="create-call" class="col-sm-2 control-label">称呼</label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-call">
-								  <option></option>
-								  <option>先生</option>
-								  <option>夫人</option>
-								  <option>女士</option>
-								  <option>博士</option>
-								  <option>教授</option>
+									<c:forEach items="${appellationList}" var="appellation">
+										<option value="${appellation.value}">${appellation.text}</option>
+									</c:forEach>
 								</select>
 							</div>
 							<label for="create-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
@@ -102,14 +162,10 @@
 							<label for="create-status" class="col-sm-2 control-label">线索状态</label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-status">
-								  <option></option>
-								  <option>试图联系</option>
-								  <option>将来联系</option>
-								  <option>已联系</option>
-								  <option>虚假线索</option>
-								  <option>丢失线索</option>
-								  <option>未联系</option>
-								  <option>需要条件</option>
+
+									<c:forEach items="${clueStateList}" var="clueState">
+										<option value="${clueState.value}">${clueState.text}</option>
+									</c:forEach>
 								</select>
 							</div>
 						</div>
@@ -118,21 +174,9 @@
 							<label for="create-source" class="col-sm-2 control-label">线索来源</label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-source">
-								  <option></option>
-								  <option>广告</option>
-								  <option>推销电话</option>
-								  <option>员工介绍</option>
-								  <option>外部介绍</option>
-								  <option>在线商场</option>
-								  <option>合作伙伴</option>
-								  <option>公开媒介</option>
-								  <option>销售邮件</option>
-								  <option>合作伙伴研讨会</option>
-								  <option>内部研讨会</option>
-								  <option>交易会</option>
-								  <option>web下载</option>
-								  <option>web调研</option>
-								  <option>聊天</option>
+									<c:forEach items="${sourceList}" var="source">
+										<option value="${source.value}">${source.text}</option>
+									</c:forEach>
 								</select>
 							</div>
 						</div>
@@ -177,7 +221,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -338,9 +382,7 @@
 			</div>
 		</div>
 	</div>
-	
-	
-	
+
 	
 	<div>
 		<div style="position: relative; left: 10px; top: -10px;">
@@ -350,7 +392,7 @@
 		</div>
 	</div>
 	
-	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
+	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;"	>
 	
 		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
 		
@@ -382,21 +424,9 @@
 				    <div class="input-group">
 				      <div class="input-group-addon">线索来源</div>
 					  <select class="form-control">
-					  	  <option></option>
-					  	  <option>广告</option>
-						  <option>推销电话</option>
-						  <option>员工介绍</option>
-						  <option>外部介绍</option>
-						  <option>在线商场</option>
-						  <option>合作伙伴</option>
-						  <option>公开媒介</option>
-						  <option>销售邮件</option>
-						  <option>合作伙伴研讨会</option>
-						  <option>内部研讨会</option>
-						  <option>交易会</option>
-						  <option>web下载</option>
-						  <option>web调研</option>
-						  <option>聊天</option>
+						  <c:forEach items="${sourceList}" var="source">
+							  <option value="${source.value}">${source.text}</option>
+						  </c:forEach>
 					  </select>
 				    </div>
 				  </div>
@@ -423,14 +453,9 @@
 				    <div class="input-group">
 				      <div class="input-group-addon">线索状态</div>
 					  <select class="form-control">
-					  	<option></option>
-					  	<option>试图联系</option>
-					  	<option>将来联系</option>
-					  	<option>已联系</option>
-					  	<option>虚假线索</option>
-					  	<option>丢失线索</option>
-					  	<option>未联系</option>
-					  	<option>需要条件</option>
+						  <c:forEach items="${clueStateList}" var="clueState">
+							  <option value="${clueState.value}">${clueState.text}</option>
+						  </c:forEach>
 					  </select>
 				    </div>
 				  </div>
@@ -439,15 +464,17 @@
 				  
 				</form>
 			</div>
+			<%--按钮--%>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 40px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createClueModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" class="btn btn-primary" id="createBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
-				
 			</div>
+
+			<%--线索列表--%>
 			<div style="position: relative;top: 50px;">
 				<table class="table table-hover">
 					<thead>
@@ -486,7 +513,8 @@
 					</tbody>
 				</table>
 			</div>
-			
+
+			<%--分页--%>
 			<div style="height: 50px; position: relative;top: 60px;">
 				<div>
 					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
