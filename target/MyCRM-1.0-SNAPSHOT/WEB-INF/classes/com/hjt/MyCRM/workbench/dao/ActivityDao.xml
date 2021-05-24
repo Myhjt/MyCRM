@@ -79,6 +79,35 @@
         select * from tbl_activity where id = #{id}
     </select>
 
+    <!---->
+    <select id="getActivityListByClueId" resultType="Activity">
+        select
+            car.id as id, a.name, a.startDate, a.endDate, u.name as owner
+        from tbl_activity as a
+        join tbl_user as u on a.owner = u.id
+        join tbl_clue_activity_relation as car on a.id = car.activityId
+        where car.clueId = #{clueId}
+    </select>
+
+    <!--{'id':,'name':,'startDate':,'endDate':,'owner':}-->
+    <select id="getActivityListByActivityNameAndClueId" resultType="Activity">
+        select a.id, a.name, a.startDate, a.endDate, u.name as owner
+        from tbl_activity as a
+        join tbl_user as u
+        on a.owner = u.id
+        where a.id not in
+        (select activityId from tbl_clue_activity_relation where clueId=#{clueId})
+        and a.name like concat('%',#{activityName},'%')
+
+    </select>
+
+    <select id="getActivityListByActivityName" resultType="Activity">
+        select a.id, a.name, a.startDate, a.endDate, u.name as owner
+        from tbl_activity as a
+        join tbl_user as u
+        on a.owner = u.id
+        where a.name like concat('%',#{activityName},'%')
+    </select>
     <!--添加数据-->
     <insert id="save" >
         insert into tbl_activity(id,owner,name,startDate,endDate,cost,description,createTime,createBy)

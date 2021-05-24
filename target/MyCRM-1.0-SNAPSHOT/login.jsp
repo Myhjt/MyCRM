@@ -15,9 +15,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	//登录验证
 	function login(){
-
-
-
 		let loginAct = $.trim($("#loginAct").val());
 		let loginPwd = $.trim($("#loginPwd").val());
 		//验证密码和账号是否为空
@@ -68,7 +65,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		}
 
 		$("#loginBtn").click(function (){
-
 			//执行验证登录
 			login();
 		})

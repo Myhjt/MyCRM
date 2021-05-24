@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjt.MyCRM.workbench.dao.ClueActivityRelationDao">
+
+    <delete id="unbound" >
+        delete from tbl_clue_activity_relation where id = #{relationId}
+    </delete>
+
+    <insert id="bound">
+        insert into tbl_clue_activity_relation(id,activityId,clueId) values
+        <foreach collection="list" item="data"  open="(" close=")" separator="),(">
+            #{data.id},#{data.activityId},#{data.clueId}
+        </foreach>
+    </insert>
+
+    <select id="getListByClueId" resultType="ClueActivityRelation">
+        select * from tbl_clue_activity_relation where clueId =#{clueId}
+    </select>
+
+    <delete id="deleteByClueId">
+        delete from tbl_clue_relation where clueId = #{clueId}
+    </delete>
+</mapper>

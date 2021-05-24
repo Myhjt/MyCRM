@@ -82,6 +82,7 @@
 			console.log($("#"+remarkId+" h5").text())
 			$("#noteContent").val($("#"+remarkId+" h5").text())  //设置模态窗口内的备注内容
 		}
+
 		$(function(){
 			$("#remark").focus(function(){
 				if(cancelAndSaveBtnDefault){

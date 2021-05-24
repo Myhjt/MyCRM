@@ -3,5 +3,116 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hjt.MyCRM.workbench.dao.ClueDao">
+    <insert id="save">
+        insert into tbl_clue()
+        values(#{id},#{fullname},#{appellation},#{owner},#{company},#{job},#{email},#{phone},#{website},
+               #{mphone},#{state},#{source},#{createBy},#{createTime},#{editBy},#{editTime},#{description},#{contactSummary},#{nextContactTime},#{address}
+               )
+    </insert>
+    
+    <update id="modify">
+        update tbl_clue 
+        set fullname =#{fullname}, appellation=#{appellation}, owner=#{owner}, company=#{company}, job=#{job},
+        email=#{email}, phone=#{phone}, website=#{website}, mphone=#{mphone}, state=#{state}, source=#{source},
+        editBy=#{editBy}, editTime=#{editTime}, description=#{description}, contactSummary=#{contactSummary},
+        nextContactTime=#{nextContactTime}, address=#{address}
+        where id=#{id}
+    </update>
+
+    <select id="getByIdForDetail" resultType="Clue">
+        select c.id,c.fullname,c.appellation,c.company,c.job,c.email,
+               c.phone,c.website,c.mphone,c.state,c.source,c.createTime,
+               c.editTime,c.description,c.contactSummary,c.nextContactTime,c.address,
+               u1.name as owner,u2.name as createBy,u3.name as editBy
+        from tbl_clue as c
+        left join tbl_user as u1
+        on c.owner = u1.id
+        left join tbl_user as u2
+        on c.createBy = u2.id
+        left join tbl_user as u3
+        on c.editBy = u3.id
+        where c.id = #{clueId}
+    </select>
+
+    <select id="getById" resultType="Clue">
+        select * from tbl_clue where id = #{clueId}
+    </select>
+
+    <select id="getByIdForModify" resultType="Clue">
+        select c.*
+        from tbl_clue as c
+        join tbl_user as u
+        on c.owner = u.id
+        where c.id = #{clueId}
+    </select>
+
+    <select id="getTotal" resultType="int">
+        select count(*) as total from tbl_clue  as c
+        join tbl_user as u
+        on c.owner = u.id
+        <where>
+            <if test="owner != null and owner !=''">
+                c.owner like concat('%',#{owner},'%')
+            </if>
+            <if test="fullname !=null and fullname !=''">
+                and c.fullname like concat('%',#{fullname},'%')
+            </if>
+            <if test="company !=null and company !=''">
+                and c.company like concat('%',#{company},'%')
+            </if>
+            <if test="mphone != null and mphone !=''">
+                and c.mphone = #{mphone}
+            </if>
+            <if test="source !=null and source!=''">
+                and c.source = #{source}
+            </if>
+            <if test="state !=null and state!=''">
+                and c.state = #{state}
+            </if>
+            <if test="phone !=null and phone!=''">
+                and c.phone = #{phone}
+            </if>
+        </where>
+    </select>
+
+    <!--分页查询-->
+    <!--{'id':,'fullname':,appellation:';,'company':'','mphone':'','phone':'','source':'','owner';'','state':''}-->
+    <!---->
+    <select id="getPageList" resultType="Clue">
+        select
+        c.id,c.fullname,c.appellation,c.company,c.mphone,c.phone,c.source,u.name as owner,c.state,c.createTime
+        from tbl_clue as c
+        join tbl_user as u
+        on  c.owner = u.id
+        <where>
+            <if test="owner != null and owner !=''">
+                c.owner like concat('%',#{owner},'%')
+            </if>
+            <if test="fullname !=null and fullname !=''">
+                and c.fullname like concat('%',#{fullname},'%')
+            </if>
+            <if test="company !=null and company !=''">
+                and c.company like concat('%',#{company},'%')
+            </if>
+            <if test="mphone != null and mphone !=''">
+                and c.mphone = #{mphone}
+            </if>
+            <if test="source !=null and source!=''">
+                and c.source = #{source}
+            </if>
+            <if test="state !=null and state!=''">
+                and c.state = #{state}
+            </if>
+            <if test="phone !=null and phone!=''">
+                and c.phone = #{phone}
+            </if>
+        </where>
+        order by c.createTime desc
+        limit #{pageStart},#{pageSize}
+    </select>
+
+    <delete id="deleteById">
+        delete from tbl_clue where id=#{id}
+    </delete>
 
 </mapper>

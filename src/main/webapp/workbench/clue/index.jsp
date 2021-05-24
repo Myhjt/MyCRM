@@ -14,10 +14,83 @@
 	<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
-		
+	<%--时间拾取插件--%>
+	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+	<%--本地化语言包--%>
+	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+	<%--分页插件--%>
+	<script type="text/javascript" src="jquery/bs_pagination/jquery.bs_pagination.min.js"></script>
+	<%--分页插件语言包--%>
+	<script type="text/javascript" src="jquery/bs_pagination/en.js"></script>
 </head>
 <script type="text/javascript">
 
+	function pageList(pageNo,pageSize){
+		$("#checkAll").prop("checked",false	);
+		$.ajax({
+			url:"workbench/clue/pageList.do",
+			data:{"pageNo":pageNo,"pageSize":pageSize,"fullname":$("#search-fullname").val(),"company":$("#search-fullname").val(),
+				  "mphone":$("#search-mphone").val(),"source":$("#search-source").val(),"owner":$("#search-owner").val(),
+				  "phone":$("#search-phone").val(),"state":$("#search-state").val()
+			},
+			type:"get",
+			dataType:"json",
+			success:function (data){
+				/*
+				*  接收的参数：
+				* data:{"total":,"dataList":[{'id':,'fullname':,appellation:';,'company':'','mphone':'',
+				* 		'phone':'','source':'','owner';'','state':''}],
+				* 		[]
+				* }
+				*
+				* 传递的参数：
+				* */
+				let html=""
+				$("#clueBody").empty()
+				$.each(data.dataList,function(index,value){
+					html += '<tr class="active" >'+
+							'<td><input type="checkbox" name="checkItem"/></td>'+
+							'<td><a style="text-decoration: none; cursor: pointer;" ' +
+							'onclick="window.location.href=\'workbench/clue/detail.do?id='+value.id+'\';">'+value.fullname+value.appellation+'</a></td>'+
+							'<td>'+value.company+'</td>'+
+							'<td>'+value.mphone+'</td>'+
+							'<td>'+value.phone+'</td>' +
+							'<td>'+value.source+'</td>'+
+							'<td>'+value.owner+'</td>'+
+							'<td>'+value.state+'</td>'+
+							'</tr>'
+				})
+				$("#clueBody").html(html)
+				//分页插件
+				let totalPage = Math.ceil(data.total/pageSize)
+				$("#cluePage").bs_pagination({
+					currentPage:pageNo,//页码
+					rowsPerPage:pageSize,//每页显示的记录数
+					maxRowsPerPage: 20,//每页最多显示的记录数
+					totalPages:totalPage,//总页数
+					totalRows:data.total,//总记录数
+					visiblePageLinks:3,//显示几个卡片
+					showGoToPage:true,
+					showRowsPerPage:true,
+					showRowsInfo: true,
+					showRowsDefaultInfo: true,
+					//该回调函数，点击分页组件的时候触发
+					onChangePage:function (event,data){
+						//重置查询条件
+						$("#search-owner").val($("#hidden-owner").val())
+						$("#search-fullname").val($("#hidden-fullname").val())
+						$("#search-company").val($("#hidden-company").val())
+						$("#search-mphone").val($("#hidden-mhone").val())
+						$("#search-source").val($("#hidden-source").val())
+						$("#search-phone").val($("#hidden-phone").val())
+						$("#search-state").val($("#hidden-state").val())
+						//调用分页查询
+						pageList(data.currentPage,data.rowsPerPage);
+					}
+				})
+			}
+		})
+	}
 	$(function(){
 		//添加按钮点击，弹出模态对话框
 		$("#createBtn").click(function(){
@@ -33,9 +106,7 @@
 					$("#create-clueOwner").val('${user.id}')
 				}
 			})
-
 		})
-
 
 		//保存按钮，提交数据
 		$("#saveBtn").click(function(){
@@ -68,11 +139,11 @@
 
 				//发送请求
 				$.ajax({
-					url:"",
+					url:"workbench/clue/save.do",
 					data:{appellation:appellation, owner:owner, company:company, job:job, email:email,
 						phone:phone, website:website, mphone:mphone, state:state, source:source, address:address,
 						description:description, contactSummary:contactSummary, nextContactTime:nextContactTime,
-						createBy:createBy
+						createBy:createBy,fullname:fullname
 					},
 					dataType:"json",
 					type:"post",
@@ -82,11 +153,50 @@
 						}
 						else{
 							$("#createClueModal").modal("hide");
+							//刷新
+							pageList(1,2)
 						}
 					}
 				})
 			}
 		})
+
+		//查询按钮
+		$("#searchBtn").click(function(){
+			//暂存查询条件
+			$("#hidden-owner").val($("#search-owner").val())
+			$("#hidden-fullname").val($("#search-fullname").val())
+			$("#hidden-company").val($("#search-company").val())
+			$("#hidden-mphone").val($("#search-mphone").val())
+			$("#hidden-phone").val($("#search-phone").val())
+			$("#hidden-source").val($("#search-source").val())
+			$("#hidden-state").val($("#search-state").val())
+			pageList(1,2)
+		})
+
+		//全选按钮
+		$("#checkAll").click(function(){
+			$("input[name='checkItem']").prop("checked",this.checked)
+		})
+
+		//itemCheckbox
+		$("#clueBody").on("click",$("input[name='checkItem']"),function(obj){
+			$("#checkAll").prop("checked",$("input[name='checkItem']:checked").length===$("input[name='checkItem']").length)
+		})
+
+
+		//时间拾取器
+		$(".time").datetimepicker({
+			minView:"month",
+			language:"zh-CN",
+			format:"yyyy-mm-dd",
+			autoclose:true,
+			todayBtn:true,
+			pickerPosition:"top-left"
+		})
+		$("#hidden-source").val($("#search-source").val())
+		$("#hidden-state").val($("#search-state").val())
+		pageList(1,2)
 	});
 </script>
 <body>
@@ -159,9 +269,9 @@
 							<div class="col-sm-10" style="width: 300px;">
 								<input type="text" class="form-control" id="create-mphone">
 							</div>
-							<label for="create-status" class="col-sm-2 control-label">线索状态</label>
+							<label for="create-state" class="col-sm-2 control-label">线索状态</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-status">
+								<select class="form-control" id="create-state">
 
 									<c:forEach items="${clueStateList}" var="clueState">
 										<option value="${clueState.value}">${clueState.text}</option>
@@ -201,7 +311,7 @@
 							<div class="form-group">
 								<label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
 								<div class="col-sm-10" style="width: 300px;">
-									<input type="text" class="form-control" id="create-nextContactTime">
+									<input type="text" class="form-control time" id="create-nextContactTime" readonly>
 								</div>
 							</div>
 						</div>
@@ -382,7 +492,6 @@
 			</div>
 		</div>
 	</div>
-
 	
 	<div>
 		<div style="position: relative; left: 10px; top: -10px;">
@@ -391,39 +500,49 @@
 			</div>
 		</div>
 	</div>
-	
+
+	<%--查询条件--%>
 	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;"	>
 	
 		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
-		
+
+			<%--隐藏域--%>
+			<input type="hidden" id="hidden-fullname">
+			<input type="hidden" id="hidden-company" >
+			<input type="hidden" id="hidden-mhone"  >
+			<input type="hidden" id="hidden-source">
+			<input type="hidden" id="hidden-owner">
+			<input type="hidden" id="hidden-phone">
+			<input type="hidden" id="hidden-state">
 			<div class="btn-toolbar" role="toolbar" style="height: 80px;">
 				<form class="form-inline" role="form" style="position: relative;top: 8%; left: 5px;">
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" id="search-fullname" type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control"  id="search-company"  type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司座机</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control"  id="search-mphone" type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">线索来源</div>
-					  <select class="form-control">
+					  <select class="form-control" id="search-source" >
+						  <option></option>
 						  <c:forEach items="${sourceList}" var="source">
 							  <option value="${source.value}">${source.text}</option>
 						  </c:forEach>
@@ -436,7 +555,7 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control"  id="search-owner" type="text">
 				    </div>
 				  </div>
 				  
@@ -445,14 +564,15 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">手机</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control"  id="search-phone" type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">线索状态</div>
-					  <select class="form-control">
+					  <select class="form-control" id="search-state" >
+						  <option></option>
 						  <c:forEach items="${clueStateList}" var="clueState">
 							  <option value="${clueState.value}">${clueState.text}</option>
 						  </c:forEach>
@@ -460,7 +580,7 @@
 				    </div>
 				  </div>
 
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" class="btn btn-default" id="searchBtn">查询</button>
 				  
 				</form>
 			</div>
@@ -479,7 +599,7 @@
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox" id="checkAll"/></td>
 							<td>名称</td>
 							<td>公司</td>
 							<td>公司座机</td>
@@ -489,65 +609,15 @@
 							<td>线索状态</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/clue/detail.jsp';">李四先生</a></td>
-							<td>动力节点</td>
-							<td>010-84846003</td>
-							<td>12345678901</td>
-							<td>广告</td>
-							<td>zhangsan</td>
-							<td>已联系</td>
-						</tr>
-                        <tr class="active">
-                            <td><input type="checkbox" /></td>
-                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='/detail.jsp';">李四先生</a></td>
-                            <td>动力节点</td>
-                            <td>010-84846003</td>
-                            <td>12345678901</td>
-                            <td>广告</td>
-                            <td>zhangsan</td>
-                            <td>已联系</td>
-                        </tr>
+					<tbody id="clueBody">
 					</tbody>
 				</table>
 			</div>
 
 			<%--分页--%>
 			<div style="height: 50px; position: relative;top: 60px;">
-				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
-				</div>
-				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
-					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
-					<div class="btn-group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-							10
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#">20</a></li>
-							<li><a href="#">30</a></li>
-						</ul>
-					</div>
-					<button type="button" class="btn btn-default" style="cursor: default;">条/页</button>
-				</div>
-				<div style="position: relative;top: -88px; left: 285px;">
-					<nav>
-						<ul class="pagination">
-							<li class="disabled"><a href="#">首页</a></li>
-							<li class="disabled"><a href="#">上一页</a></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">4</a></li>
-							<li><a href="#">5</a></li>
-							<li><a href="#">下一页</a></li>
-							<li class="disabled"><a href="#">末页</a></li>
-						</ul>
-					</nav>
-				</div>
+				<%--分页组件--%>
+				<div id="cluePage"></div>
 			</div>
 			
 		</div>

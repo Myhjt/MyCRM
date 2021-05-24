@@ -1,6 +1,7 @@
 package com.hjt.MyCRM.workbench.dao;
 
 import com.hjt.MyCRM.workbench.domain.Activity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -21,4 +22,10 @@ public interface ActivityDao {
     int modify(Activity activity);
 
     Activity detail(String id);
+
+    List<Activity> getActivityListByClueId(String clueId);
+
+    List<Activity> getActivityListByActivityNameAndClueId(@Param("activityName") String activityName, @Param("clueId") String clueId);
+
+    List<Activity> getActivityListByActivityName(String activityName);
 }

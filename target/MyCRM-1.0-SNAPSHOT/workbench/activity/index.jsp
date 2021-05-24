@@ -109,15 +109,9 @@
 					}
 				})
 				$("#createActivityModal").modal("show");
-				//时间拾取器
-				$(".time").datetimepicker({
-					minView:"month",
-					language:"zh-CN",
-					format:"yyyy-mm-dd",
-					autoclose:true,
-					todayBtn:true,
-					pickerPosition:"bottom-left"
-				})
+
+
+
 			})
 
 			//保存按钮
@@ -293,8 +287,6 @@
 				}
 			})
 
-
-
 			let check_nums = 0;
 			//全选、反选功能
 			$("#check-all").click(function(){
@@ -314,6 +306,16 @@
 			 */
 			$("#activity-list").on("click",$("input[name=check-item]"),function(obj){
 				$("#check-all").prop("checked",$("input[name='check-item']").length===$("input[name='check-item']:checked").length)
+			})
+
+			//时间拾取器
+			$(".time").datetimepicker({
+				minView:"month",
+				language:"zh-CN",
+				format:"yyyy-mm-dd",
+				autoclose:true,
+				todayBtn:true,
+				pickerPosition:"bottom-left"
 			})
 			pageList(1,2)
 		});
