@@ -4,6 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hjt.MyCRM.workbench.dao.ContactsActivityRelationDao">
     <insert id="save">
-        insert into tbl_contacts_relation(id,contactsId,activityId) values(#{id},#{contactsId},#{activityId})
+        insert into tbl_contacts_activity_relation(id,contactsId,activityId) values(#{id},#{contactsId},#{activityId})
     </insert>
 </mapper>

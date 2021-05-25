@@ -20,6 +20,6 @@
     </select>
 
     <delete id="deleteByClueId">
-        delete from tbl_clue_relation where clueId = #{clueId}
+        delete from tbl_clue_activity_relation where clueId = #{clueId}
     </delete>
 </mapper>
