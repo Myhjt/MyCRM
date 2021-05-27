@@ -9,4 +9,107 @@
                     values(#{id},#{owner},#{money},#{name},#{expectedDate},#{customerId},#{stage},#{type},#{source},
                            #{activityId},#{contactsId},#{createBy},#{createTime},#{description},#{contactSummary},#{nextContactTime})
     </insert>
+
+    <select id="getTotal" resultType="_int">
+        select count(*) from tbl_tran as t
+            join tbl_user as u
+            on t.owner = u.id
+            join tbl_customer as c
+            on t.customerId = c.id
+        <where>
+            <if test="owner!=null and owner!=''">
+                u.name like '%' #{owner} '%'
+            </if>
+            <if test="name!=null and name!=''">
+                t.name like '%' #{name}'%'
+            </if>
+            <if test="customer!=null and customer!=''">
+                c.name like '%' #{customer} '%'
+            </if>
+            <if test="stage != null and stage!=''">
+                t.stage = #{stage}
+            </if>
+            <if test="type!=null and type!=''">
+                t.type = #{type}
+            </if>
+            <if test="source != null and source !=''">
+                t.source = #{source}
+            </if>
+        </where>
+    </select>
+
+    <select id="getPageList" resultType="Tran">
+        select t.id as id, t.name as name,cus.name as customerId,t.stage as stage,
+               t.type as type,u.name as owner,t.source as source,con.fullname as contactsId
+        from tbl_tran as t
+        join tbl_user as u
+        on t.owner = u.id
+        join tbl_customer as cus
+        on t.customerId = cus.id
+        left join tbl_contacts as con
+        on t.contactsId = con.id
+        <where>
+            <if test="owner!=null and owner!=''">
+                u.name like '%' #{owner} '%'
+            </if>
+            <if test="name!=null and name!=''">
+                t.name like '%' #{name}'%'
+            </if>
+            <if test="customer!=null and customer!=''">
+                cus.name like '%' #{customer} '%'
+            </if>
+            <if test="stage != null and stage!=''">
+                t.stage = #{stage}
+            </if>
+            <if test="type!=null and type!=''">
+                t.type = #{type}
+            </if>
+            <if test="source != null and source !=''">
+                t.source = #{source}
+            </if>
+            <if test="contacts != null and contacts !=''">
+                con.fullname like '%' #{contacts} '%'
+            </if>
+        </where>
+        order by t.createTime desc
+        limit #{pageStart},#{pageSize}
+    </select>
+
+    <select id="detail" resultType="Tran">
+        select t.id as id,t.editTime as editTime,t.name as name,cus.name as customerId,t.stage as stage,t.money as money,
+               t.createTime as createTime,u2.name as createBy,t.description as description,
+               t.expectedDate as expectedDate, a.name as activityId,t.description as description,
+               t.contactSummary as contactSummary,t.nextContactTime as nextContactTime,
+               u3.name as editBy,
+               t.type as type,u.name as owner,t.source as source,con.fullname as contactsId
+        from tbl_tran as t
+            left join tbl_user as u
+                   on t.owner = u.id
+            left join tbl_customer as cus
+                   on t.customerId = cus.id
+            left join tbl_contacts as con
+                   on t.contactsId = con.id
+            left join tbl_activity as a
+                   on t.activityId = a.id
+            left join tbl_user as u2
+                   on t.createBy = u2.id
+            left join tbl_user as u3
+                   on t.editBy = u3.id
+        where t.id = #{id}
+    </select>
+
+    <!--
+    setId(tranId);
+        tran.setStage(stage);
+        tran.setEditBy(editBy);
+        tran.setEditTime(editTime);
+        tran.setMoney(money);
+        tran.setExpectedDate(expectedDate);-->
+    <update id="modifyStage">
+        update tbl_tran set
+            stage=#{stage},
+            editBy=#{editBy},
+            editTime=#{editTime}
+        where id=#{id}
+    </update>
 </mapper>

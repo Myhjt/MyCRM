@@ -7,4 +7,13 @@
         insert into tbl_tran_history(id,stage,money,expectedDate,createTime,createBy,tranId)
         values(#{id},#{stage},#{money},#{expectedDate},#{createTime},#{createBy},#{tranId})
     </insert>
+
+    <select id="getByTranId" resultType="TranHistory">
+        select
+            h.id,h.stage,h.money,h.expectedDate,h.createTime,u.name as createBy,h.tranId
+        from tbl_tran_history as h
+        join tbl_user as u
+            on h.createBy = u.id
+        where tranId=#{tranId}
+    </select>
 </mapper>

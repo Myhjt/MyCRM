@@ -268,7 +268,6 @@ public class ClueController extends HttpServlet {
         map.put("owner",owner);
         map.put("phone",phone);
         map.put("state",state);
-
         ClueService clueService = (ClueService)ServiceFactory.getService(new ClueServiceImpl());
         PaginationVo<Clue> clueList = clueService.getPagination(map);
         PrintJson.printJsonObj(response,clueList);

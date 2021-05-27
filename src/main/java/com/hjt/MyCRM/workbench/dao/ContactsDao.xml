@@ -10,4 +10,8 @@
                            #{job},#{birth},#{createBy},#{createTime},#{description},#{contactSummary},#{nextContactTime})
 
     </insert>
+
+    <select id="getContactsListByContactsName" resultType="Contacts">
+        select * from tbl_contacts where fullname like '%' #{contactsName} '%'
+    </select>
 </mapper>

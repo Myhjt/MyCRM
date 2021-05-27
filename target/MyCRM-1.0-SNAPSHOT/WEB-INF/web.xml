@@ -104,7 +104,14 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>TranController</servlet-name>
+        <url-pattern>/workbench/transaction/add.do</url-pattern>
         <url-pattern>/workbench/transaction/save.do</url-pattern>
         <url-pattern>/workbench/transaction/getCustomerNames.do</url-pattern>
+        <url-pattern>/workbench/transaction/getActivityListByActivityName.do</url-pattern>
+        <url-pattern>/workbench/transaction/getContactsListByContactsName.do</url-pattern>
+        <url-pattern>/workbench/transaction/pageList.do</url-pattern>
+        <url-pattern>/workbench/transaction/detail.do</url-pattern>
+        <url-pattern>/workbench/transaction/getHistoryList.do</url-pattern>
+        <url-pattern>/workbench/transaction/changeStage.do</url-pattern>
     </servlet-mapping>
 </web-app>

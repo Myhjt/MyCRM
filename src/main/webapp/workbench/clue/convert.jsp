@@ -194,7 +194,7 @@
 		</div>
 	<div id="owner" style="position: relative; left: 40px; height: 35px; top: 50px;">
 		记录的所有者：<br>
-		<b>${param.owner}</b>
+		<>${param.owner}</>
 	</div>
 	<div id="operation" style="position: relative; left: 40px; height: 35px; top: 100px;">
 		<input class="btn btn-primary" type="button" id="convertBtn" value="转换">

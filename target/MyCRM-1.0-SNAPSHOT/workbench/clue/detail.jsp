@@ -25,6 +25,7 @@
 
 	//刷新市场活动列表
 	function getActivityList(){
+		$("#checkAll").prop("checked",false)
 		$.ajax({
 			url:"workbench/clue/getActivityListByClueId.do",
 			data:{"id":'${clue.id}'},

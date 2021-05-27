@@ -8,6 +8,8 @@ import com.hjt.MyCRM.workbench.service.ActivityService;
 import com.hjt.MyCRM.workbench.service.impl.ActivityServiceImpl;
 import org.junit.Test;
 
+import java.util.Date;
+
 public class ActivityTest {
     @Test
     public void saveTest(){
