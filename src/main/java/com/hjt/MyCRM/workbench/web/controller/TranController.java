@@ -10,6 +10,7 @@ import com.hjt.MyCRM.utils.PrintJson;
 import com.hjt.MyCRM.utils.ServiceFactory;
 import com.hjt.MyCRM.utils.UUIDUtil;
 import com.hjt.MyCRM.vo.PaginationVo;
+import com.hjt.MyCRM.vo.TranStageVo;
 import com.hjt.MyCRM.workbench.domain.Activity;
 import com.hjt.MyCRM.workbench.domain.Contacts;
 import com.hjt.MyCRM.workbench.domain.Tran;
@@ -61,6 +62,15 @@ public class TranController extends HttpServlet {
         else if("/workbench/transaction/changeStage.do".equals(path)){
             changeStage(request,response);
         }
+        else if("/workbench/transaction/getTranStageCounts.do".equals(path)){
+            getTranStageCounts(request,response);
+        }
+    }
+
+    private void getTranStageCounts(HttpServletRequest request, HttpServletResponse response) {
+        TranService tranService = (TranService) ServiceFactory.getService(new TranServiceImpl());
+        List<TranStageVo> maps = tranService.getTranStageCounts();
+        PrintJson.printJsonObj(response,maps);
     }
 
     private void changeStage(HttpServletRequest request, HttpServletResponse response) {

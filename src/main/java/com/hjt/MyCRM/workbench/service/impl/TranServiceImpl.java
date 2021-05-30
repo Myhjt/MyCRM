@@ -6,6 +6,7 @@ import com.hjt.MyCRM.utils.DateTimeUtil;
 import com.hjt.MyCRM.utils.SqlSessionUtil;
 import com.hjt.MyCRM.utils.UUIDUtil;
 import com.hjt.MyCRM.vo.PaginationVo;
+import com.hjt.MyCRM.vo.TranStageVo;
 import com.hjt.MyCRM.workbench.dao.*;
 import com.hjt.MyCRM.workbench.domain.*;
 import com.hjt.MyCRM.workbench.service.TranService;
@@ -118,5 +119,10 @@ public  class TranServiceImpl implements TranService {
             throw new TranModifyException("阶段改变失败");
         }
         return true;
+    }
+
+    @Override
+    public List<TranStageVo> getTranStageCounts() {
+        return tranDao.getTranStageCounts();
     }
 }

@@ -98,6 +98,15 @@
         where t.id = #{id}
     </select>
 
+    <select id="getTranStageCounts" resultType="com.hjt.MyCRM.vo.TranStageVo">
+        select d.text as stage,count(t.id) as nums
+        from tbl_dic_value as d
+        left join tbl_tran as t
+        on t.stage = d.value
+        where d.typeCode = 'stage'
+        group by d.text
+
+    </select>
     <!--
     setId(tranId);
         tran.setStage(stage);

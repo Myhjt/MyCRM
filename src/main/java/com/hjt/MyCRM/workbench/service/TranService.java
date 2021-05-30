@@ -3,6 +3,7 @@ package com.hjt.MyCRM.workbench.service;
 import com.hjt.MyCRM.exception.TranModifyException;
 import com.hjt.MyCRM.exception.TranSaveException;
 import com.hjt.MyCRM.vo.PaginationVo;
+import com.hjt.MyCRM.vo.TranStageVo;
 import com.hjt.MyCRM.workbench.domain.Activity;
 import com.hjt.MyCRM.workbench.domain.Contacts;
 import com.hjt.MyCRM.workbench.domain.Tran;
@@ -25,4 +26,6 @@ public interface TranService {
     List<TranHistory> getHistoryList(String id);
 
     boolean changeStage(Tran tran) throws TranModifyException;
+
+    List<TranStageVo> getTranStageCounts();
 }
